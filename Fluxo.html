@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;550;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,450;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="theme.css"/>
+<link rel="stylesheet" href="theme.css?v=3"/>
 </head>
 <body>
 <div id="root"></div>
@@ -100,9 +100,15 @@ function App() {
   const [cmdk, setCmdk] = useState(false);
   const [tweakOpen, setTweakOpen] = useState(false);
   const [cfg, setCfg] = useState(TWEAK_DEFAULTS);
+  const [theme, setTheme] = useState(() => localStorage.getItem('fluxo-theme') || 'light');
 
   useEffect(() => { applyAccent(cfg.accent); applyFont(cfg.font); }, [cfg]);
   useEffect(() => { localStorage.setItem('fluxo-route', route); }, [route]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('fluxo-theme', theme);
+  }, [theme]);
+  const toggleTheme = () => setTheme(t => t==='dark' ? 'light' : 'dark');
 
   useEffect(() => {
     const h = e => { e.preventDefault(); e.stopPropagation(); };
@@ -143,7 +149,7 @@ function App() {
     <div className="fx-app" data-screen-label={route}>
       <Sidebar route={route} setRoute={setRoute}/>
       <main className="fx-main">
-        <Topbar route={route} setRoute={setRoute} onCmdK={()=>setCmdk(true)}/>
+        <Topbar route={route} setRoute={setRoute} onCmdK={()=>setCmdk(true)} theme={theme} toggleTheme={toggleTheme}/>
         <div className="fx-content">{renderRoute()}</div>
       </main>
       <EmpresaModal empresa={empresa} onClose={()=>setEmpresa(null)}/>

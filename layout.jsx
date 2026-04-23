@@ -73,7 +73,7 @@ function Sidebar({ route, setRoute, density }) {
   );
 }
 
-function Topbar({ route, setRoute, onCmdK }) {
+function Topbar({ route, setRoute, onCmdK, theme, toggleTheme }) {
   const labels = {
     dashboard: 'Painel de Empresas',
     empresas: 'Empresas',
@@ -98,6 +98,9 @@ function Topbar({ route, setRoute, onCmdK }) {
         <kbd>⌘K</kbd>
       </button>
       <div className="fx-top-actions">
+        <button className="fx-icon-btn fx-theme-toggle" title={theme==='dark'?'Mudar para claro':'Mudar para escuro'} onClick={toggleTheme}>
+          <Icon name={theme==='dark'?'sun':'moon'} size={15}/>
+        </button>
         <button className="fx-icon-btn" title="Novidades"><Icon name="sparkle" size={16}/></button>
         <button className="fx-icon-btn fx-has-dot" title="Notificações"><Icon name="bell" size={16}/></button>
         <button className="fx-top-primary"><Icon name="plus" size={14}/> Nova tarefa</button>
