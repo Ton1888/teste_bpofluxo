@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<title>Fluxo · Gestão de Tarefas e Processos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;550;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,450;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="theme.css"/>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="layout.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="empresas.jsx"></script>
+<script type="text/babel" src="views.jsx"></script>
+<script type="text/babel" src="modals.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "forest",
+  "density": "comfortable",
+  "font": "fraunces"
+}/*EDITMODE-END*/;
+
+const ACCENTS = {
+  forest:  { h: 150, label: 'Floresta' },
+  moss:    { h: 135, label: 'Musgo' },
+  sage:    { h: 165, label: 'Sálvia' },
+  cypress: { h: 180, label: 'Cipreste' },
+};
+
+function applyAccent(key) {
+  const a = ACCENTS[key] || ACCENTS.forest;
+  const r = document.documentElement.style;
+  r.setProperty('--fx-green-900', `oklch(28% 0.05 ${a.h})`);
+  r.setProperty('--fx-green-800', `oklch(36% 0.07 ${a.h})`);
+  r.setProperty('--fx-green-700', `oklch(45% 0.09 ${a.h})`);
+  r.setProperty('--fx-green-600', `oklch(54% 0.11 ${a.h})`);
+  r.setProperty('--fx-green-500', `oklch(62% 0.12 ${a.h})`);
+  r.setProperty('--fx-green-400', `oklch(72% 0.1 ${a.h})`);
+  r.setProperty('--fx-green-300', `oklch(82% 0.07 ${a.h})`);
+  r.setProperty('--fx-green-200', `oklch(90% 0.05 ${a.h})`);
+  r.setProperty('--fx-green-100', `oklch(95% 0.03 ${a.h})`);
+  r.setProperty('--fx-green-50',  `oklch(97.5% 0.02 ${a.h})`);
+}
+
+function applyFont(font) {
+  const r = document.documentElement.style;
+  if (font === 'inter') {
+    r.setProperty('--fx-serif', "'Inter Tight', sans-serif");
+  } else {
+    r.setProperty('--fx-serif', "'Fraunces', Georgia, serif");
+  }
+}
+
+function Tweaks({ open, cfg, setCfg }) {
+  if (!open) return null;
+  const update = (k, v) => {
+    const next = { ...cfg, [k]: v };
+    setCfg(next);
+    window.parent.postMessage({type: '__edit_mode_set_keys', edits: {[k]: v}}, '*');
+  };
+  return (
+    <div className="fx-tweaks">
+      <h4>Tweaks <span className="fx-muted" style={{fontWeight:400,fontSize:11}}>variações</span></h4>
+      <div className="fx-tweaks-row">
+        <span>Cor principal</span>
+        <div className="fx-tweaks-swatches">
+          {Object.entries(ACCENTS).map(([k, a]) => (
+            <button key={k} className={'fx-sw ' + (cfg.accent===k?'is-active':'')} onClick={()=>update('accent', k)}
+              style={{background:`oklch(45% 0.09 ${a.h})`}} title={a.label}/>
+          ))}
+        </div>
+      </div>
+      <div className="fx-tweaks-row">
+        <span>Títulos</span>
+        <div className="fx-seg" style={{fontSize:11}}>
+          <button className={cfg.font==='fraunces'?'is-active':''} onClick={()=>update('font','fraunces')}>Serif</button>
+          <button className={cfg.font==='inter'?'is-active':''} onClick={()=>update('font','inter')}>Sans</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const saved = localStorage.getItem('fluxo-route') || 'dashboard';
+  const [route, setRoute] = useState(saved);
+  const [empresa, setEmpresa] = useState(null);
+  const [cmdk, setCmdk] = useState(false);
+  const [tweakOpen, setTweakOpen] = useState(false);
+  const [cfg, setCfg] = useState(TWEAK_DEFAULTS);
+
+  useEffect(() => { applyAccent(cfg.accent); applyFont(cfg.font); }, [cfg]);
+  useEffect(() => { localStorage.setItem('fluxo-route', route); }, [route]);
+
+  useEffect(() => {
+    const h = e => { e.preventDefault(); e.stopPropagation(); };
+    const k = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setCmdk(true); }
+    };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, []);
+
+  useEffect(() => {
+    const listener = (e) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === '__activate_edit_mode') setTweakOpen(true);
+      if (e.data.type === '__deactivate_edit_mode') setTweakOpen(false);
+    };
+    window.addEventListener('message', listener);
+    window.parent.postMessage({type: '__edit_mode_available'}, '*');
+    return () => window.removeEventListener('message', listener);
+  }, []);
+
+  const renderRoute = () => {
+    switch(route) {
+      case 'dashboard': return <Dashboard setRoute={setRoute} openEmpresa={setEmpresa}/>;
+      case 'empresas': return <Empresas openEmpresa={setEmpresa}/>;
+      case 'tarefas': return <Tarefas/>;
+      case 'checklists': return <Checklists/>;
+      case 'comunicacoes': return <Comunicacoes/>;
+      case 'relatorios': return <Placeholder title="Relatórios" sub="DRE, razão e apurações" icon="chart"/>;
+      case 'integracoes': return <Placeholder title="Integrações" sub="Bancos, ERPs e contadores" icon="link"/>;
+      case 'financeiro': return <Placeholder title="Financeiro" sub="Contas a pagar e a receber" icon="trending"/>;
+      case 'config': return <Placeholder title="Ajustes" sub="Equipe, permissões e preferências" icon="settings"/>;
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="fx-app" data-screen-label={route}>
+      <Sidebar route={route} setRoute={setRoute}/>
+      <main className="fx-main">
+        <Topbar route={route} setRoute={setRoute} onCmdK={()=>setCmdk(true)}/>
+        <div className="fx-content">{renderRoute()}</div>
+      </main>
+      <EmpresaModal empresa={empresa} onClose={()=>setEmpresa(null)}/>
+      <CmdK open={cmdk} onClose={()=>setCmdk(false)} onOpen={setEmpresa}/>
+      <Tweaks open={tweakOpen} cfg={cfg} setCfg={setCfg}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
