@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;550;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,450;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="theme.css?v=3"/>
+<link rel="stylesheet" href="theme.css?v=4"/>
 </head>
 <body>
 <div id="root"></div>
@@ -29,7 +29,7 @@ const { useState, useEffect } = React;
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "forest",
   "density": "comfortable",
-  "font": "fraunces"
+  "font": "inter"
 }/*EDITMODE-END*/;
 
 const ACCENTS = {
@@ -63,31 +63,103 @@ function applyFont(font) {
   }
 }
 
-function Tweaks({ open, cfg, setCfg }) {
-  if (!open) return null;
+function Ajustes({ cfg, setCfg, theme, toggleTheme }) {
   const update = (k, v) => {
     const next = { ...cfg, [k]: v };
     setCfg(next);
     window.parent.postMessage({type: '__edit_mode_set_keys', edits: {[k]: v}}, '*');
   };
   return (
-    <div className="fx-tweaks">
-      <h4>Tweaks <span className="fx-muted" style={{fontWeight:400,fontSize:11}}>variações</span></h4>
-      <div className="fx-tweaks-row">
-        <span>Cor principal</span>
-        <div className="fx-tweaks-swatches">
-          {Object.entries(ACCENTS).map(([k, a]) => (
-            <button key={k} className={'fx-sw ' + (cfg.accent===k?'is-active':'')} onClick={()=>update('accent', k)}
-              style={{background:`oklch(45% 0.09 ${a.h})`}} title={a.label}/>
-          ))}
+    <div className="fx-page">
+      <div className="fx-page-head">
+        <div>
+          <h1 className="fx-h1">Ajustes</h1>
+          <p className="fx-page-sub">Equipe, permissões e preferências do escritório</p>
         </div>
       </div>
-      <div className="fx-tweaks-row">
-        <span>Títulos</span>
-        <div className="fx-seg" style={{fontSize:11}}>
-          <button className={cfg.font==='fraunces'?'is-active':''} onClick={()=>update('font','fraunces')}>Serif</button>
-          <button className={cfg.font==='inter'?'is-active':''} onClick={()=>update('font','inter')}>Sans</button>
-        </div>
+
+      <div className="fx-settings">
+        <aside className="fx-settings-nav">
+          <div className="fx-settings-nav-label">Preferências</div>
+          <button className="is-active"><Icon name="settings" size={13}/> Aparência</button>
+          <button disabled><Icon name="user" size={13}/> Perfil <span className="fx-pill-soon">em breve</span></button>
+          <button disabled><Icon name="users" size={13}/> Equipe <span className="fx-pill-soon">em breve</span></button>
+          <button disabled><Icon name="eye" size={13}/> Permissões <span className="fx-pill-soon">em breve</span></button>
+          <div className="fx-settings-nav-label fx-settings-nav-label--spaced">Escritório</div>
+          <button disabled><Icon name="building" size={13}/> Dados do escritório <span className="fx-pill-soon">em breve</span></button>
+          <button disabled><Icon name="bell" size={13}/> Notificações <span className="fx-pill-soon">em breve</span></button>
+          <button disabled><Icon name="link" size={13}/> Integrações <span className="fx-pill-soon">em breve</span></button>
+        </aside>
+
+        <section className="fx-settings-main">
+          <header className="fx-settings-section-head">
+            <h2 className="fx-h2">Aparência</h2>
+            <p className="fx-muted">Personalize como o Fluxo é exibido para você. As alterações são salvas automaticamente neste navegador.</p>
+          </header>
+
+          <div className="fx-card fx-settings-card">
+            <div className="fx-settings-row">
+              <div className="fx-settings-row-meta">
+                <div className="fx-settings-row-title">Tema</div>
+                <div className="fx-settings-row-sub">Escolha entre claro e escuro.</div>
+              </div>
+              <div className="fx-theme-picker">
+                <button className={'fx-theme-opt '+(theme==='light'?'is-active':'')} onClick={()=>theme!=='light'&&toggleTheme()}>
+                  <div className="fx-theme-preview fx-theme-preview--light">
+                    <span className="fx-tp-bar"/><span className="fx-tp-body"/>
+                  </div>
+                  <span className="fx-theme-opt-label"><Icon name="sun" size={13}/> Claro</span>
+                </button>
+                <button className={'fx-theme-opt '+(theme==='dark'?'is-active':'')} onClick={()=>theme!=='dark'&&toggleTheme()}>
+                  <div className="fx-theme-preview fx-theme-preview--dark">
+                    <span className="fx-tp-bar"/><span className="fx-tp-body"/>
+                  </div>
+                  <span className="fx-theme-opt-label"><Icon name="moon" size={13}/> Escuro</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="fx-settings-row">
+              <div className="fx-settings-row-meta">
+                <div className="fx-settings-row-title">Cor principal</div>
+                <div className="fx-settings-row-sub">Define a cor de botões, links e destaques.</div>
+              </div>
+              <div className="fx-accent-picker">
+                {Object.entries(ACCENTS).map(([k, a]) => (
+                  <button key={k} className={'fx-accent-opt '+(cfg.accent===k?'is-active':'')} onClick={()=>update('accent', k)}>
+                    <span className="fx-accent-chip" style={{background:`oklch(45% 0.09 ${a.h})`}}/>
+                    <span>{a.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="fx-settings-row">
+              <div className="fx-settings-row-meta">
+                <div className="fx-settings-row-title">Tipografia de títulos</div>
+                <div className="fx-settings-row-sub">Define o estilo de fonte usado nos cabeçalhos.</div>
+              </div>
+              <div className="fx-font-picker">
+                <button className={'fx-font-opt '+(cfg.font==='fraunces'?'is-active':'')} onClick={()=>update('font','fraunces')}>
+                  <span className="fx-font-sample" style={{fontFamily:"'Fraunces', Georgia, serif"}}>Aa</span>
+                  <span className="fx-font-opt-meta">
+                    <span className="fx-font-opt-name">Serif</span>
+                    <span className="fx-font-opt-sub">Fraunces · editorial</span>
+                  </span>
+                </button>
+                <button className={'fx-font-opt '+(cfg.font==='inter'?'is-active':'')} onClick={()=>update('font','inter')}>
+                  <span className="fx-font-sample" style={{fontFamily:"'Inter Tight', sans-serif"}}>Aa</span>
+                  <span className="fx-font-opt-meta">
+                    <span className="fx-font-opt-name">Sans</span>
+                    <span className="fx-font-opt-sub">Inter Tight · moderno</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p className="fx-settings-foot fx-muted">As outras preferências estarão disponíveis em breve.</p>
+        </section>
       </div>
     </div>
   );
@@ -98,7 +170,6 @@ function App() {
   const [route, setRoute] = useState(saved);
   const [empresa, setEmpresa] = useState(null);
   const [cmdk, setCmdk] = useState(false);
-  const [tweakOpen, setTweakOpen] = useState(false);
   const [cfg, setCfg] = useState(TWEAK_DEFAULTS);
   const [theme, setTheme] = useState(() => localStorage.getItem('fluxo-theme') || 'light');
 
@@ -119,16 +190,7 @@ function App() {
     return () => window.removeEventListener('keydown', k);
   }, []);
 
-  useEffect(() => {
-    const listener = (e) => {
-      if (!e.data || typeof e.data !== 'object') return;
-      if (e.data.type === '__activate_edit_mode') setTweakOpen(true);
-      if (e.data.type === '__deactivate_edit_mode') setTweakOpen(false);
-    };
-    window.addEventListener('message', listener);
-    window.parent.postMessage({type: '__edit_mode_available'}, '*');
-    return () => window.removeEventListener('message', listener);
-  }, []);
+
 
   const renderRoute = () => {
     switch(route) {
@@ -140,7 +202,7 @@ function App() {
       case 'relatorios': return <Placeholder title="Relatórios" sub="DRE, razão e apurações" icon="chart"/>;
       case 'integracoes': return <Placeholder title="Integrações" sub="Bancos, ERPs e contadores" icon="link"/>;
       case 'financeiro': return <Placeholder title="Financeiro" sub="Contas a pagar e a receber" icon="trending"/>;
-      case 'config': return <Placeholder title="Ajustes" sub="Equipe, permissões e preferências" icon="settings"/>;
+      case 'config': return <Ajustes cfg={cfg} setCfg={setCfg} theme={theme} toggleTheme={toggleTheme}/>;
       default: return null;
     }
   };
@@ -154,7 +216,6 @@ function App() {
       </main>
       <EmpresaModal empresa={empresa} onClose={()=>setEmpresa(null)}/>
       <CmdK open={cmdk} onClose={()=>setCmdk(false)} onOpen={setEmpresa}/>
-      <Tweaks open={tweakOpen} cfg={cfg} setCfg={setCfg}/>
     </div>
   );
 }

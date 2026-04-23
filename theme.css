@@ -612,3 +612,209 @@ html[data-theme="dark"] .fx-task-tag { background: oklch(30% 0.07 150); color: o
 html[data-theme="dark"] .fx-badge-count { background: #26261f; color: #cacabc; }
 html[data-theme="dark"] .fx-concil-ok { background: oklch(30% 0.07 150); color: oklch(80% 0.1 150); }
 html[data-theme="dark"] .fx-msg-seg button.is-active { background: oklch(30% 0.07 150); color: oklch(82% 0.08 150); }
+
+/* ============ SETTINGS (Ajustes) ============ */
+.fx-settings {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 8px 32px;
+}
+.fx-settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 0;
+  align-self: start;
+}
+.fx-settings-nav-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fx-text-faint);
+  padding: 10px 10px 6px;
+  font-weight: 600;
+}
+.fx-settings-nav-label--spaced { margin-top: 14px; }
+.fx-settings-nav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--fx-text);
+  text-align: left;
+  transition: background 0.12s;
+}
+.fx-settings-nav button svg { color: var(--fx-text-muted); flex-shrink: 0; }
+.fx-settings-nav button:hover:not(:disabled) { background: var(--fx-surface-2); }
+.fx-settings-nav button.is-active {
+  background: var(--fx-accent-soft);
+  color: var(--fx-accent-hover);
+  font-weight: 550;
+}
+.fx-settings-nav button.is-active svg { color: var(--fx-accent-hover); }
+.fx-settings-nav button:disabled {
+  color: var(--fx-text-faint);
+  cursor: not-allowed;
+}
+.fx-settings-nav button:disabled svg { color: var(--fx-text-faint); }
+
+.fx-pill-soon {
+  margin-left: auto;
+  font-size: 9.5px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--fx-surface-2);
+  color: var(--fx-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  border: 1px solid var(--fx-border);
+}
+
+.fx-settings-main { min-width: 0; }
+.fx-settings-section-head {
+  padding: 4px 4px 20px;
+  border-bottom: 1px solid var(--fx-border);
+  margin-bottom: 20px;
+}
+.fx-settings-section-head .fx-h2 {
+  font-family: var(--fx-serif);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fx-heading);
+  margin: 0 0 4px;
+}
+.fx-settings-section-head p { margin: 0; font-size: 12.5px; line-height: 1.55; max-width: 560px; }
+
+.fx-settings-card {
+  padding: 0;
+  overflow: hidden;
+}
+.fx-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: center;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--fx-border);
+}
+.fx-settings-row:last-child { border-bottom: 0; }
+.fx-settings-row-meta { min-width: 0; }
+.fx-settings-row-title {
+  font-size: 13.5px;
+  font-weight: 550;
+  color: var(--fx-heading);
+  margin-bottom: 3px;
+}
+.fx-settings-row-sub {
+  font-size: 12px;
+  color: var(--fx-text-muted);
+  line-height: 1.5;
+}
+
+/* Theme picker */
+.fx-theme-picker { display: flex; gap: 12px; }
+.fx-theme-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 2px solid var(--fx-border);
+  background: var(--fx-surface);
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.fx-theme-opt:hover { border-color: var(--fx-border-strong); }
+.fx-theme-opt.is-active { border-color: var(--fx-accent); }
+.fx-theme-preview {
+  width: 120px;
+  height: 72px;
+  border-radius: 6px;
+  border: 1px solid var(--fx-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.fx-theme-preview--light { background: #fafaf7; }
+.fx-theme-preview--light .fx-tp-bar { background: #161612; height: 14px; width: 36px; border-radius: 2px; margin: 8px; }
+.fx-theme-preview--light .fx-tp-body { flex: 1; background: linear-gradient(180deg, transparent 0, transparent 8px, #ebebe3 8px, #ebebe3 10px, transparent 10px, transparent 20px, #ebebe3 20px, #ebebe3 22px), #ffffff; margin: 0 8px 8px 48px; border-radius: 4px; border: 1px solid #ebebe3; }
+.fx-theme-preview--dark { background: #0f0f0c; }
+.fx-theme-preview--dark .fx-tp-bar { background: #e4e4d8; height: 14px; width: 36px; border-radius: 2px; margin: 8px; }
+.fx-theme-preview--dark .fx-tp-body { flex: 1; background: #1a1a16; margin: 0 8px 8px 48px; border-radius: 4px; border: 1px solid #2a2a24; }
+.fx-theme-opt-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--fx-text);
+  justify-content: center;
+}
+
+/* Accent picker */
+.fx-accent-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+.fx-accent-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid var(--fx-border);
+  background: var(--fx-surface);
+  font-size: 12.5px;
+  color: var(--fx-text);
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.fx-accent-opt:hover { border-color: var(--fx-border-strong); }
+.fx-accent-opt.is-active { border-color: var(--fx-accent); color: var(--fx-accent-hover); font-weight: 550; }
+.fx-accent-chip {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Font picker */
+.fx-font-picker { display: flex; gap: 10px; }
+.fx-font-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--fx-border);
+  background: var(--fx-surface);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s;
+}
+.fx-font-opt:hover { border-color: var(--fx-border-strong); }
+.fx-font-opt.is-active { border-color: var(--fx-accent); }
+.fx-font-sample {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--fx-heading);
+  width: 36px;
+  text-align: center;
+}
+.fx-font-opt-meta { display: flex; flex-direction: column; gap: 2px; }
+.fx-font-opt-name { font-size: 13px; font-weight: 550; color: var(--fx-heading); }
+.fx-font-opt-sub { font-size: 11px; color: var(--fx-text-muted); }
+
+.fx-settings-foot { margin-top: 16px; font-size: 12px; padding: 0 4px; }
+
+@media (max-width: 880px) {
+  .fx-settings { grid-template-columns: 1fr; }
+  .fx-settings-row { grid-template-columns: 1fr; gap: 12px; }
+}
